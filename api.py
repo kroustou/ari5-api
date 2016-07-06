@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from flask import Flask
+from flask import Flask, redirect
 import requests
 import json
 from settings import now_playing_url, discogs_token
@@ -10,9 +10,11 @@ app = Flask(__name__)
 @app.route("/image/")
 def get_image():
     if hasattr(app, 'current'):
-        return app.current.get('image')
+        image = app.current.get('image')
+    image = get_current_song().get('image', 'http://www.zeek.net/i/tape.gif')
+    return redirect(image)
 
-@app.route("/now-playing/")
+
 def get_current_song():
     response = requests.get(now_playing_url)
     if response.ok:
@@ -29,11 +31,15 @@ def get_current_song():
         except:
             image = None
     app.current = {
-            'success': response.ok,
-            'result': response.text if response.ok else response.status_code,
-            'image': image
-        }
-    return json.dumps(app.current)
+        'success': response.ok,
+        'result': response.text if response.ok else response.status_code,
+        'image': image
+    }
+    return app.current
+
+@app.route("/now-playing/")
+def now_playing():
+    return json.dumps(get_current_song())
 
 if __name__ == "__main__":
     app.run()
