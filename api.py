@@ -14,6 +14,13 @@ def get_image():
     image = get_current_song().get('image', 'http://www.zeek.net/i/tape.gif')
     return redirect(image)
 
+@app.route("/title/")
+def get_title():
+    if hasattr(app, 'current'):
+        title = app.current.get('result')
+    title = get_current_song().get('result', 'Listen now')
+    return title
+
 
 def get_current_song():
     response = requests.get(now_playing_url)
