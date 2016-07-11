@@ -1,18 +1,10 @@
 #! /usr/bin/env python
-from flask import Flask, redirect
+from flask import Flask
 import requests
 import json
 from settings import now_playing_url, discogs_token
 
 app = Flask(__name__)
-
-
-@app.route("/image/")
-def get_image():
-    if hasattr(app, 'current'):
-        image = app.current.get('image')
-    image = get_current_song().get('image', 'http://www.zeek.net/i/tape.gif')
-    return redirect(image)
 
 def get_current_song():
     response = requests.get(now_playing_url)
