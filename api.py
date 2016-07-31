@@ -30,20 +30,19 @@ def get_current_song():
     response = requests.get(now_playing_url)
     if response.ok:
         app.current = get_details(response.text)
-    app.current['status'] = response.ok
+    app.current['success'] = response.ok
     return app.current
 
 @app.route("/history/")
 def get_history():
     response = requests.get(history_url)
+    titles = []
     if response.ok:
         soup = BeautifulSoup(response.text, 'html.parser')
         tr = soup.findAll('table')[2].findAll('tr')[2:]
-
-        titles = []
         for row in tr:
             titles.append(get_details(row.findAll('td')[1].text))
-        return json.dumps(titles)
+    return json.dumps({'songs': titles, 'success': response.ok})
 
 
 @app.route("/now-playing/")
