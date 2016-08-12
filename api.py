@@ -3,7 +3,7 @@ from flask import Flask
 import requests
 import json
 from bs4 import BeautifulSoup
-from settings import now_playing_url, discogs_token, history_url
+from settings import now_playing_url, discogs_token, history_url, listeners_url
 
 app = Flask(__name__)
 
@@ -33,6 +33,7 @@ def get_current_song():
     app.current['success'] = response.ok
     return app.current
 
+
 @app.route("/history/")
 def get_history():
     response = requests.get(history_url)
@@ -43,6 +44,15 @@ def get_history():
         for row in tr:
             titles.append(get_details(row.findAll('td')[1].text))
     return json.dumps({'songs': titles, 'success': response.ok})
+
+
+@app.route("/listeners/")
+def get_listeners():
+    response = requests.get(listeners_url)
+    if response.ok:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        listeners = soup.findAll('table')[3].findAll('tr')[1].text.split()[-4]
+    return json.dumps({'listeners': listeners})
 
 
 @app.route("/now-playing/")
