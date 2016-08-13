@@ -51,7 +51,7 @@ def get_listeners():
     response = requests.get(listeners_url)
     if response.ok:
         soup = BeautifulSoup(response.text, 'html.parser')
-        listeners = soup.findAll('table')[3].findAll('tr')[1].text.split()[-4]
+        listeners = soup.findAll('table')[3].findAll('tr')[1].text.split()[8]
     return json.dumps({'listeners': listeners})
 
 
