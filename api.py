@@ -8,12 +8,15 @@ from settings import now_playing_url, discogs_token, history_url, listeners_url
 app = Flask(__name__)
 
 def get_details(title):
+    # fake headers because discogs was dropping requests
+    headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
     try:
         image_response = requests.get(
             "https://api.discogs.com/database/search?q=%s&token=%s" % (
                 title,
                 discogs_token
-            )
+            ),
+            headers=headers
         )
         image = json.loads(image_response.text).get(
             'results'
