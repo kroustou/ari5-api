@@ -34,7 +34,7 @@ def get_current_song():
     response = requests.get(now_playing_url)
     if response.ok:
         app.current = get_details(
-            response.text.replace('+', '').replace('-', '')
+            response.text.replace('+', ' ').replace('-', ' ')
         )
     app.current['success'] = response.ok
     return app.current
