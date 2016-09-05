@@ -7,6 +7,7 @@ from settings import now_playing_url, discogs_token, history_url, listeners_url
 
 app = Flask(__name__)
 
+
 def get_details(title):
     image_response = requests.get(
         "https://api.discogs.com/database/search?q=%s&token=%s" % (
@@ -29,7 +30,9 @@ def get_details(title):
 def get_current_song():
     response = requests.get(now_playing_url)
     if response.ok:
-        app.current = get_details(response.text)
+        app.current = get_details(
+            response.text.replace('+', '').replace('-', '')
+        )
     app.current['success'] = response.ok
     return app.current
 
@@ -42,7 +45,11 @@ def get_history():
         soup = BeautifulSoup(response.text, 'html.parser')
         tr = soup.findAll('table')[2].findAll('tr')[2:]
         for row in tr:
-            titles.append(get_details(row.findAll('td')[1].text))
+            titles.append(
+                get_details(
+                    row.findAll('td')[1].text.replace('+', '').replace('-', '')
+                )
+            )
     return json.dumps({'songs': titles, 'success': response.ok})
 
 
