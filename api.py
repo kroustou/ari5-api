@@ -9,13 +9,16 @@ app = Flask(__name__)
 
 
 def get_details(title):
-    image_response = requests.get(
-        "https://api.discogs.com/database/search?q=%s&token=%s" % (
-            title,
-            discogs_token
-        )
-    )
+    # fake headers because discogs was dropping requests
+    headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
     try:
+        image_response = requests.get(
+            "https://api.discogs.com/database/search?q=%s&token=%s" % (
+                title,
+                discogs_token
+            ),
+            headers=headers
+        )
         image = json.loads(image_response.text).get(
             'results'
         )[0].get('thumb')
@@ -58,7 +61,7 @@ def get_listeners():
     response = requests.get(listeners_url)
     if response.ok:
         soup = BeautifulSoup(response.text, 'html.parser')
-        listeners = soup.findAll('table')[3].findAll('tr')[1].text.split()[-4]
+        listeners = soup.findAll('table')[3].findAll('tr')[1].text.split()[9]
     return json.dumps({'listeners': listeners})
 
 
