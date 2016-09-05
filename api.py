@@ -23,7 +23,7 @@ def get_details(title):
             'results'
         )[0].get('thumb')
     except:
-        image = 'http://placehold.it/150x150?text=no+image'
+        image = 'http://placehold.it/150x150/2c3e50/?text=no+image'
     return {
         'result': title,
         'image': image
