@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 
 def get_details(title):
+    title = title.replace('+', ' ').replace('-', ' ')
     # fake headers because discogs was dropping requests
     headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
     try:
@@ -34,7 +35,7 @@ def get_current_song():
     response = requests.get(now_playing_url)
     if response.ok:
         app.current = get_details(
-            response.text.replace('+', ' ').replace('-', ' ')
+            response.text
         )
     app.current['success'] = response.ok
     return app.current
@@ -50,7 +51,7 @@ def get_history():
         for row in tr:
             titles.append(
                 get_details(
-                    row.findAll('td')[1].text.replace('+', '').replace('-', '')
+                    row.findAll('td')[1].text
                 )
             )
     return json.dumps({'songs': titles, 'success': response.ok})
